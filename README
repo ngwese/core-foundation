@@ -1,0 +1,52 @@
+1. Installation
+
+1.1 Obtain and Load the MAC-TYPES FFI
+    
+    You 
+
+    (load "/path/to/mac-types/defsys.lisp")
+
+    At this point you should be ready to compile the CoreFoundation
+    FFI. Its system definition declares a dependency on the MAC-TYPES
+    system so it will get compiled and loaded as needed.
+
+1.2 Compiling and Loading the CORE-FOUNDATION FFI 
+
+    (load "/path/to/core-foundation/defsys.lisp")
+    (compile-system 'core-foundation)
+    (load-system 'core-foundation)
+ 
+    In the future all that is needed to load the FFI is two load the
+    two system definitions and load the core-foundation system.
+
+2. Testing
+
+Very limited testing on the CFString to Lisp string conversion
+routines has been done so far but they do work under typical
+conditions. The follow is an excerpt from some interactive
+experimentation in the LispWorks IDE's listener:
+
+CL-USER> (setf a (cf:cf-uuid-create (cf:k-cf-allocator-default)))
+#<Pointer: CORE-FOUNDATION:CF-UUID-REF = #x00300BA0>
+CL-USER> (setf b (cf:cf-uuid-create (cf:k-cf-allocator-default)))
+#<Pointer: CORE-FOUNDATION:CF-UUID-REF = #x00300C10>
+CL-USER> (cf:cf-get-type-id a)
+24
+CL-USER> (cf:cf-get-type-id b)
+24
+CL-USER> (cf:cf-equal a b)
+NIL
+CL-USER> (cf:cf-copy-description a)
+#<Pointer: CORE-FOUNDATION:CF-STRING-REF = #x00300E70>
+CL-USER> (cf:cf-string->string *)
+"<CFUUID 0x300ba0> 116DA749-8457-11D9-A7A2-000A95C49478"
+CL-USER> (cf:cf-uuid-create-string (cf:k-cf-allocator-default) a)
+#<Pointer: CORE-FOUNDATION:CF-STRING-REF = #x00300D40>
+CL-USER> (setf a-str *)
+#<Pointer: CORE-FOUNDATION:CF-STRING-REF = #x00300D40>
+CL-USER> (cf:cf-string->string a-str)
+"116DA749-8457-11D9-A7A2-000A95C49478"
+CL-USER> (cf:cf-retain a-str)
+#<Pointer: CORE-FOUNDATION:CF-TYPE-REF = #x00300D40>
+CL-USER> (cf:cf-get-retain-count a-str)
+2
